@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fff3ed"><title>小寶貝今晚吃什麼？♡ 女友的愛心餐單</title>
+<style>
+:root{--pink:#f3a9bd;--deep:#92546b;--cream:#fff8fb;--line:#f6dce6;--rose:#ffe8ef}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 8% 5%,#ffe0eb 0,transparent 30%),radial-gradient(circle at 95% 30%,#ffeddf 0,transparent 28%),linear-gradient(145deg,#fff9fc,#fff0f5);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif;color:#694653;display:flex;justify-content:center;padding:22px 14px}
+.wrap{width:min(100%,560px)}
+.hero{text-align:center;padding:28px 18px 25px;border-radius:30px;background:linear-gradient(135deg,#ffdce8,#f9c8d9 58%,#ffe9df);box-shadow:0 13px 32px #d78ca51c;color:var(--deep);border:2px solid #fff}
+.hero .emoji{font-size:48px;letter-spacing:5px}
+.hero h1{font-size:clamp(26px,7vw,35px);margin:9px 0 5px;font-weight:950;letter-spacing:1px}
+.hero p{margin:7px 0 0;font-size:14px}
+.hero .tiny{display:inline-block;margin-top:14px;padding:7px 14px;border-radius:99px;background:#ffffffa8;font-size:12px}
+.panel{margin-top:16px;background:#ffffffdb;border:1px solid #fff;border-radius:23px;padding:18px;box-shadow:0 8px 25px #bd78900c}
+.label{font-size:14px;font-weight:850;margin:0 0 12px;color:#9a5d73}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#fffafd;border-radius:99px;padding:9px 13px;color:#805565;font-size:13px;cursor:pointer;transition:.15s}
+.chip.active{background:#e991ad;color:white;border-color:#e991ad;box-shadow:0 4px 10px #e991ad35}
+.result{margin-top:17px;background:linear-gradient(160deg,#fff,#fff1f6);border:1.5px dashed #efb8cb;border-radius:25px;padding:28px 18px;text-align:center;min-height:225px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.result:before,.result:after{content:"♡";position:absolute;color:#f4c1d1;font-size:27px}.result:before{top:12px;left:17px}.result:after{bottom:9px;right:19px}
+.small{font-size:12px;color:#b17d91}
+.foodemoji{font-size:61px;margin:10px 0}
+.foodname{font-size:29px;font-weight:950;color:#92546b}
+.desc{font-size:14px;color:#987785;margin-top:8px}
+.tag{font-size:11px;color:#a86d82;margin-top:13px;background:#ffe5ed;padding:7px 13px;border-radius:99px}
+.main{width:100%;border:0;border-radius:17px;padding:16px;background:linear-gradient(100deg,#e98eaa,#d77d9e);color:white;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 7px 15px #c96f8335}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.secondary{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px 8px;color:#805565;font-weight:750;cursor:pointer}
+.message{font-size:14px;line-height:1.8;color:#805565;background:#fff5f8;border-radius:15px;padding:12px}
+.history{font-size:12px;color:#987d83;text-align:center;line-height:1.9}
+.clear{display:block;margin:10px auto 0;border:0;background:none;text-decoration:underline;color:#a18b90;font-size:12px;cursor:pointer}
+button{transition:transform .15s,filter .15s}button:active{transform:scale(.97)}button:focus-visible{outline:3px solid #a85d78;outline-offset:3px}
+.foot{text-align:center;color:#b68b9a;font-size:12px;margin:18px 0 8px;line-height:1.8}
+</style></head>
+<body><main class="wrap">
+<header class="hero"><div class="emoji">🎀 💗 🇹🇼</div><h1>小寶貝今晚吃什麼？</h1><p>女友愛心餐單・台灣美食限定</p><p>今天也要乖乖吃飯，吃飽飽才有力氣想我 ♡</p><div class="tiny">💌 女友大人親自為你挑選</div></header>
+<section class="panel"><p class="label">🐰 小寶貝今天想吃哪一類？</p><div class="chips" id="categories"><button class="chip active" data-cat="全部">🎲 全部</button><button class="chip" data-cat="夜市小吃">🏮 夜市小吃</button><button class="chip" data-cat="飯類">🍚 飯類</button><button class="chip" data-cat="麵食">🍜 麵食</button><button class="chip" data-cat="火鍋">🍲 火鍋</button><button class="chip" data-cat="台式料理">🥢 台式料理</button><button class="chip" data-cat="日韓料理">🍣 日韓料理</button><button class="chip" data-cat="飲料甜點">🧋 飲料甜點</button></div></section>
+<section class="result" aria-live="polite"><div class="small" id="resultLabel">噔噔！小寶貝的晚餐會是……</div><div class="foodemoji" id="foodEmoji">🤔</div><div class="foodname" id="foodName">小寶貝還沒吃飯！</div><div class="desc" id="foodDesc">快按下面的粉紅按鈕，讓女友幫你決定吧！</div><div class="tag" id="foodTag">台灣美食隨機抽選</div></section>
+<section style="margin-top:14px"><button class="main" id="draw">💗 女友幫小寶貝決定！</button><div class="actions"><button class="secondary" id="again">🔄 不喜歡，再抽一次</button><button class="secondary" id="accept">❤️ 就決定吃這個</button></div></section>
+<section class="panel"><p class="label">💌 女友想對小寶貝說</p><div class="message" id="message">「親愛的小寶貝，不可以餓肚子喔！快讓女友幫你選一份好吃的 ♡」</div></section>
+<section class="panel"><p class="label">🐾 小寶貝今晚抽過的美食</p><div class="history" id="history">尚無紀錄，快來抽一個！</div><button class="clear" id="clear">清除抽選紀錄</button></section>
+<div class="foot">Made with ♡ by your girlfriend<br>小寶貝要好好吃飯，女友才會放心 🎀</div>
+</main>
+<script>
+const foods=[
+['蚵仔煎','夜市小吃','🦪','外酥內嫩，配上特製醬汁','夜市經典'],['大腸包小腸','夜市小吃','🌭','糯米腸包香腸，台灣夜市代表','夜市必吃'],['鹽酥雞','夜市小吃','🍗','炸得酥香，再加九層塔更過癮','邪惡宵夜'],['地瓜球','夜市小吃','🟡','外酥內Q，忍不住一顆接一顆','夜市點心'],['雞排','夜市小吃','🍗','大份量酥脆雞排，滿足肉食慾','人氣小吃'],['臭豆腐','夜市小吃','🧈','外酥內嫩，配泡菜最對味','勇者美食'],['胡椒餅','夜市小吃','🥮','炭烤餅皮包著多汁胡椒肉餡','排隊小吃'],['滷肉飯','飯類','🍚','香噴噴滷肉淋在熱白飯上','台灣國民美食'],['雞腿便當','飯類','🍱','炸雞腿配三菜一飯，吃飽飽','飽足首選'],['排骨飯','飯類','🍱','酥香排骨配熱騰騰白飯','便當經典'],['控肉飯','飯類','🥩','軟嫩滷控肉，超級下飯','肉肉控最愛'],['牛肉麵','麵食','🍜','紅燒湯頭搭配軟嫩牛肉','台灣代表美食'],['擔仔麵','麵食','🍜','蝦湯香氣搭配肉燥','台南經典'],['滷味','麵食','🥢','自己挑喜歡的蔬菜、豆干和肉片','自由搭配'],['麻醬麵','麵食','🍜','濃郁麻醬拌麵，簡單又滿足','經典麵食'],['麻辣鍋','火鍋','🌶️','香麻湯底，肉片和蔬菜一起煮','重口味之選'],['石頭火鍋','火鍋','🍲','先爆香再加入湯頭，越煮越香','台式火鍋'],['酸菜白肉鍋','火鍋','🥬','酸香湯頭配上薄切豬肉','暖心晚餐'],['個人小火鍋','火鍋','🍲','一人一鍋，想吃什麼自己選','方便又滿足'],['三杯雞','台式料理','🍗','麻油、醬油與九層塔香氣十足','超級下飯'],['薑母鴨','台式料理','🍲','薑香湯頭暖胃又暖心','台式經典'],['刈包','台式料理','🥙','軟Q外皮夾著香滷肉和花生粉','台灣漢堡'],['蚵仔麵線','台式料理','🥣','濃郁勾芡搭配鮮蚵','經典小吃'],['台式炒飯','台式料理','🍳','粒粒分明，香氣十足','簡單好吃'],['日式拉麵','日韓料理','🍜','濃郁湯頭搭配叉燒和溏心蛋','日式享受'],['韓式炸雞','日韓料理','🍗','甜辣醬汁包裹酥脆外皮','韓式人氣'],['壽司','日韓料理','🍣','清爽又有飽足感','日式選擇'],['珍珠奶茶','飲料甜點','🧋','經典台灣手搖飲','飲料時間'],['豆花','飲料甜點','🍮','嫩豆花配花生、粉圓或芋圓','甜品時間'],['芋圓仙草','飲料甜點','🍧','Q彈芋圓搭配滑嫩仙草','台灣甜品']
+];
+let category='全部',current=null,history=[];
+const $=id=>document.getElementById(id);
+function renderHistory(){$('history').textContent=history.length?history.map((x,i)=>`${i+1}. ${x}`).join('　｜　'):'尚無紀錄，快來抽一個！';}
+function draw(){let pool=foods.filter(f=>category==='全部'||f[1]===category);let choices=pool.filter(f=>f!==current);if(!choices.length)choices=pool;current=choices[Math.floor(Math.random()*choices.length)];$('resultLabel').textContent='🎉 命運選中了！';$('foodEmoji').textContent=current[2];$('foodName').textContent=current[0];$('foodDesc').textContent=current[3];$('foodTag').textContent=current[1]+'・'+current[4];$('message').textContent=['「小寶貝乖乖去吃飯，女友抱抱你 ♡」','「今天也要吃得飽飽的，知道嗎？」','「不可以餓肚子喔，女友會心疼的 🥺」','「這是女友挑的愛心晚餐，快去吃！」','「吃完要跟女友報告好不好吃 🎀」'][Math.floor(Math.random()*4)];history.unshift(current[0]);history=history.slice(0,8);renderHistory();}
+$('categories').addEventListener('click',e=>{const b=e.target.closest('button[data-cat]');if(!b)return;category=b.dataset.cat;document.querySelectorAll('#categories .chip').forEach(x=>x.classList.toggle('active',x===b));current=null;$('resultLabel').textContent='分類已切換';$('foodEmoji').textContent='🤔';$('foodName').textContent='準備好了嗎？';$('foodDesc').textContent='按下抽選，決定今晚吃什麼！';$('foodTag').textContent=category+'美食';});
+$('draw').addEventListener('click',draw);$('again').addEventListener('click',draw);
+$('accept').addEventListener('click',()=>{if(!current){$('message').textContent='先抽出一道美食，才能決定今晚吃什麼喔！';return;}$('resultLabel').textContent='❤️ 今晚就吃這個！';$('message').textContent=`「決定了！今晚小寶貝就吃：${current[0]}！乖乖去吃飯，啾咪 ♡」`;$('foodTag').textContent='已經決定，開動！ 🍽️';});
+$('clear').addEventListener('click',()=>{history=[];renderHistory();});
+</script></body></html>
