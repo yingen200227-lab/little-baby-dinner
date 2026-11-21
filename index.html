@@ -60,24 +60,40 @@ body{
   position:relative;
   transition:background .35s,color .35s;
 }
+/* ============================================================
+   情侶背景照片輪播：小寶貝／腦公大人共用
+   ============================================================ */
 .bf-photo-bg{
-  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s ease;
-}
-.bf-photo-layer{
-  position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;
-  opacity:0;transform:scale(1.035);
-  transition:opacity 2.2s ease-in-out,transform 10s ease;
-  filter:blur(0px) saturate(1.08);will-change:opacity,transform;
-}
-.bf-photo-layer.visible{opacity:1;transform:scale(1)}
-.bf-photo-bg.active-bg{opacity:1}
-body.boy-theme::after{
-  content:"";
   position:fixed;
   inset:0;
   z-index:0;
   pointer-events:none;
-  background:linear-gradient(145deg, rgba(245,250,255,0.14), rgba(230,242,255,0.18));
+  opacity:0;
+  transition:opacity .8s ease;
+  overflow:hidden;
+}
+.bf-photo-bg.active-bg{opacity:1}
+.bf-photo-layer{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  opacity:0;
+  transform:scale(1.035);
+  transition:opacity 2.2s ease-in-out,transform 10s ease;
+  filter:saturate(1.08);
+  will-change:opacity,transform;
+}
+.bf-photo-layer.visible{opacity:1;transform:scale(1)}
+.bf-photo-bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.12));
+  pointer-events:none;
 }
 .wrap{width:min(100%,600px);position:relative;z-index:1}
 .landing{
@@ -179,8 +195,7 @@ body.boy-theme::after{
   font-weight:700;
   color:var(--deep);
 }
-.bf-bg-switcher{margin-top:12px;display:none;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px}
-body.boy-theme .bf-bg-switcher{display:flex}
+.bf-bg-switcher{margin-top:12px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px}
 .bg-chip{
   border:1px solid var(--line);
   background:#ffffffc9;
@@ -687,48 +702,100 @@ let history = loadHistory();
 
 const $ = id => document.getElementById(id);
 
+// ============================================================
+// 情侶背景照片自動輪播 V2
+// Girl / Boy 共用同一套輪播機制
+// ============================================================
 function ensureBackgroundLayers() {
   const host = $('bfPhotoBg');
-  if (!host.querySelector('.bf-photo-layer')) {
-    host.innerHTML = '<div class="bf-photo-layer"></div><div class="bf-photo-layer"></div>';
+  if (!host) return;
+
+  if (host.querySelectorAll('.bf-photo-layer').length !== 2) {
+    host.innerHTML = `
+      <div class="bf-photo-layer"></div>
+      <div class="bf-photo-layer"></div>
+    `;
   }
 }
 
 function applyBoyBackground() {
-  if (!BF_BG_PHOTOS.length) return;
-  ensureBackgroundLayers();
-  let nextIndex = bgIndex;
-  if (BF_BG_PHOTOS.length > 1) {
-    while (nextIndex === bgIndex) nextIndex = Math.floor(Math.random() * BF_BG_PHOTOS.length);
-  } else nextIndex = 0;
+  if (BF_BG_PHOTOS.length < 2) return;
+
+  const host = $('bfPhotoBg');
+  if (!host) return;
+
+  const layers = host.querySelectorAll('.bf-photo-layer');
+  if (layers.length !== 2) return;
+
+  // 隨機挑選下一張，避免與目前照片重複
+  let nextIndex;
+  do {
+    nextIndex = Math.floor(Math.random() * BF_BG_PHOTOS.length);
+  } while (nextIndex === bgIndex);
+
   bgIndex = nextIndex;
-  const layers = $('bfPhotoBg').querySelectorAll('.bf-photo-layer');
-  const nextLayer = 1 - bgLayerIndex;
-  layers[nextLayer].style.backgroundImage = `url("${BF_BG_PHOTOS[bgIndex]}")`;
-  layers[nextLayer].classList.add('visible');
-  layers[bgLayerIndex].classList.remove('visible');
-  bgLayerIndex = nextLayer;
-  $('bfPhotoBg').classList.add('active-bg');
+
+  const nextLayerIndex = 1 - bgLayerIndex;
+  const nextLayer = layers[nextLayerIndex];
+  const currentLayer = layers[bgLayerIndex];
+
+  nextLayer.style.backgroundImage = `url("${BF_BG_PHOTOS[bgIndex]}")`;
+  nextLayer.classList.add('visible');
+  currentLayer.classList.remove('visible');
+  bgLayerIndex = nextLayerIndex;
+
+  console.log('[背景輪播] 已切換照片：', BF_BG_PHOTOS[bgIndex]);
 }
 
 function startBoyBackgroundRotation() {
+  // 先清除前一次輪播，避免產生多個計時器
   stopBoyBackgroundRotation();
-  if (!['boy', 'girl'].includes(theme) || !BF_BG_PHOTOS.length) return;
+
+  const host = $('bfPhotoBg');
+  if (!host || !BF_BG_PHOTOS.length) {
+    console.warn('[背景輪播] 找不到背景容器或照片清單');
+    return;
+  }
+
   ensureBackgroundLayers();
-  const layers = $('bfPhotoBg').querySelectorAll('.bf-photo-layer');
+  const layers = host.querySelectorAll('.bf-photo-layer');
+  if (layers.length !== 2) return;
+
+  // 隨機選擇第一張照片
   bgIndex = Math.floor(Math.random() * BF_BG_PHOTOS.length);
-  layers.forEach((layer, i) => {
-    layer.style.backgroundImage = `url("${BF_BG_PHOTOS[bgIndex]}")`;
-    layer.classList.toggle('visible', i === 0);
-  });
   bgLayerIndex = 0;
-  $('bfPhotoBg').classList.add('active-bg');
-  if (BF_BG_PHOTOS.length > 1) bgTimer = setInterval(applyBoyBackground, 10000);
+
+  layers.forEach((layer, index) => {
+    layer.style.backgroundImage = `url("${BF_BG_PHOTOS[bgIndex]}")`;
+    layer.classList.toggle('visible', index === 0);
+  });
+
+  host.classList.add('active-bg');
+
+  console.log('[背景輪播] 啟動成功');
+  console.log('[背景輪播] 目前模式：', theme);
+  console.log('[背景輪播] 照片數量：', BF_BG_PHOTOS.length);
+  console.log('[背景輪播] 第一張照片：', BF_BG_PHOTOS[bgIndex]);
+
+  // 每 10 秒切換一次照片
+  if (BF_BG_PHOTOS.length > 1) {
+    bgTimer = setInterval(() => {
+      const app = $('appView');
+      if (app && !app.classList.contains('hidden')) {
+        applyBoyBackground();
+      }
+    }, 10000);
+  }
 }
 
 function stopBoyBackgroundRotation() {
-  if (bgTimer) { clearInterval(bgTimer); bgTimer = null; }
-  $('bfPhotoBg').classList.remove('active-bg');
+  if (bgTimer !== null) {
+    clearInterval(bgTimer);
+    bgTimer = null;
+  }
+
+  const host = $('bfPhotoBg');
+  if (host) host.classList.remove('active-bg');
 }
 
 function loadHistory() {
