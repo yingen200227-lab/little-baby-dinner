@@ -70,7 +70,7 @@ body{
   filter:blur(0px) saturate(1.08);will-change:opacity,transform;
 }
 .bf-photo-layer.visible{opacity:1;transform:scale(1)}
-body.boy-theme .bf-photo-bg.active-bg{opacity:1}
+.bf-photo-bg.active-bg{opacity:1}
 body.boy-theme::after{
   content:"";
   position:fixed;
@@ -430,7 +430,7 @@ button:active{transform:scale(.97)}
         <span class="badge" id="weatherBadge">🌤️ 載入當地天氣...</span>
       </div>
       <div class="bf-bg-switcher" id="bfBgSwitcher" aria-live="polite">
-        📸 腦公專屬照片・自動輪播中
+        📸 情侶專屬照片・自動輪播中
       </div>
     </header>
 
@@ -876,7 +876,7 @@ function setTheme(newTheme) {
     $('msgTitle').textContent = '💬 小寶貝偷偷對腦公大人說';
     $('message').textContent = BOY_FLIRTY_MESSAGES[Math.floor(Math.random() * BOY_FLIRTY_MESSAGES.length)];
   } else {
-    stopBoyBackgroundRotation();
+    startBoyBackgroundRotation();
     gfMode = true;
     $('gfMode').checked = true;
     $('heroEmoji').textContent = '🎀 💗 🌍';
@@ -993,6 +993,7 @@ function draw() {
 $('enterGirl').addEventListener('click', () => enterApp('girl'));
 $('enterBoy').addEventListener('click', () => enterApp('boy'));
 $('backHome').addEventListener('click', () => {
+  stopBoyBackgroundRotation();
   $('appView').classList.add('hidden');
   $('landingView').classList.remove('hidden');
 });
