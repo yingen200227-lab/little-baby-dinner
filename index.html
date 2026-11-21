@@ -713,7 +713,6 @@ function applyBoyBackground() {
 
 function startBoyBackgroundRotation() {
   stopBoyBackgroundRotation();
-  if (theme !== 'boy' || !BF_BG_PHOTOS.length) return;
   if (!['boy', 'girl'].includes(theme) || !BF_BG_PHOTOS.length) return;
   ensureBackgroundLayers();
   const layers = $('bfPhotoBg').querySelectorAll('.bf-photo-layer');
