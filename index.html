@@ -61,25 +61,23 @@ body{
   transition:background .35s,color .35s;
 }
 .bf-photo-bg{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  opacity:0.85;
-  transition:opacity .45s ease;
-  background-position:center;
-  background-size:cover;
-  background-repeat:no-repeat;
-  filter:blur(0px) saturate(1.05);
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity .8s ease;
 }
-body.boy-theme .bf-photo-bg.active-bg{opacity:0.24}
+.bf-photo-layer{
+  position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;
+  opacity:0;transform:scale(1.035);
+  transition:opacity 2.2s ease-in-out,transform 10s ease;
+  filter:blur(0px) saturate(1.08);will-change:opacity,transform;
+}
+.bf-photo-layer.visible{opacity:1;transform:scale(1)}
+body.boy-theme .bf-photo-bg.active-bg{opacity:1}
 body.boy-theme::after{
   content:"";
   position:fixed;
   inset:0;
   z-index:0;
   pointer-events:none;
-  background:linear-gradient(145deg, rgba(245,250,255,0.72), rgba(230,242,255,0.78));
+  background:linear-gradient(145deg, rgba(245,250,255,0.14), rgba(230,242,255,0.18));
 }
 .wrap{width:min(100%,600px);position:relative;z-index:1}
 .landing{
@@ -240,6 +238,11 @@ select:focus{border-color:var(--primary)}
   border-radius:12px;
   line-height:1.5;
 }
+.custom-budget-wrap{margin-top:12px;padding:13px;border:1px solid var(--line);border-radius:15px;background:var(--soft)}
+.custom-budget-label{display:block;font-size:12px;font-weight:800;color:var(--deep);margin-bottom:7px}
+.custom-budget-input{width:100%;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--text);font-size:16px;font-weight:750;outline:none}
+.custom-budget-input:focus{border-color:var(--primary)}
+.custom-budget-hint{font-size:11px;color:var(--subtext);margin-top:6px;line-height:1.5}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{
   border:1px solid var(--line);
@@ -426,11 +429,8 @@ button:active{transform:scale(.97)}
         <span class="badge" id="clockBadge">🕒 載入時間中...</span>
         <span class="badge" id="weatherBadge">🌤️ 載入當地天氣...</span>
       </div>
-      <div class="bf-bg-switcher" id="bfBgSwitcher" aria-label="切換腦公背景照片">
-        <button class="bg-chip active" data-bg="0">📸 照片 1</button>
-        <button class="bg-chip" data-bg="1">😜 照片 2</button>
-        <button class="bg-chip" data-bg="2">🍳 照片 3</button>
-        <button class="bg-chip" data-bg="random">🎲 隨機換一張</button>
+      <div class="bf-bg-switcher" id="bfBgSwitcher" aria-live="polite">
+        📸 腦公專屬照片・自動輪播中
       </div>
     </header>
 
@@ -461,6 +461,13 @@ button:active{transform:scale(.97)}
         <button class="chip" data-budget="500">💴 500以下</button>
         <button class="chip" data-budget="800">💶 800以下</button>
         <button class="chip" data-budget="900+">💎 900以上</button>
+        <button class="chip" data-budget="custom">✏️ 自訂金額</button>
+      </div>
+      <div class="custom-budget-wrap hidden" id="customBudgetWrap">
+        <label class="custom-budget-label" for="customBudgetInput">每人最高預算（NT$）</label>
+        <input id="customBudgetInput" class="custom-budget-input" type="number"
+               min="1" max="100000" step="1" placeholder="例如：1200" inputmode="numeric">
+        <div class="custom-budget-hint">輸入金額後，系統會篩選每人價格不超過此金額的餐點。</div>
       </div>
     </section>
 
@@ -641,7 +648,7 @@ const FOODS = [
   ['精緻日式無菜單料理','日韓料理','日本','🍣','主廚嚴選當季生魚片、握壽司與炙燒海鮮','浪漫紀念日',true,'可提前告知師傅不吃豬肉與內臟',true,'若有芋頭天婦羅或芋泥甜點請師傅替換',1600],
   ['海陸活體蒸氣海鮮鍋','火鍋','南部','🦞','龍蝦、鮑魚、鮮魚層層清蒸，精華煮粥鮮甜破表','海味饗宴',true,'純海鮮與粥品，避開豬肉配料即可',true,'確認粥底或配菜無芋頭塊',1300],
   ['高空景觀乾式熟成牛排','燒肉排餐','全球','🥂','夜景配頂級熟成牛排，氣氛直接拉滿','心動約會夜',true,'純牛排西餐非常安全',true,'甜點避開芋頭慕斯',1850],
-  ['法式精緻鐵板燒','燒肉排餐','中部','👨‍🍳','主廚桌邊現煎干貝、龍蝦與菲力牛排，視覺味覺雙享受','高質感大餐',true,'選牛排與海鮮主餐即可',true,'',1380]
+  ['法式精緻鐵板燒','燒肉排餐','中部','👨🍳','主廚桌邊現煎干貝、龍蝦與菲力牛排，視覺味覺雙享受','高質感大餐',true,'選牛排與海鮮主餐即可',true,'',1380]
 ];
 
 const GIRL_FLIRTY_MESSAGES = [
@@ -672,28 +679,56 @@ let category = '全部';
 let gfMode = true;
 let bfMode = false;
 let current = null;
-let bgIndex = 0;
+let bgIndex = -1;
+let bgTimer = null;
+let bgLayerIndex = 0;
+let customBudget = 1200;
 let history = loadHistory();
 
 const $ = id => document.getElementById(id);
 
-function applyBoyBackground(index) {
-  if (index === 'random') {
-    bgIndex = Math.floor(Math.random() * BF_BG_PHOTOS.length);
-  } else {
-    bgIndex = Number(index) % BF_BG_PHOTOS.length;
+function ensureBackgroundLayers() {
+  const host = $('bfPhotoBg');
+  if (!host.querySelector('.bf-photo-layer')) {
+    host.innerHTML = '<div class="bf-photo-layer"></div><div class="bf-photo-layer"></div>';
   }
-  const photoUrl = BF_BG_PHOTOS[bgIndex];
-  $('bfPhotoBg').style.backgroundImage = `url('${photoUrl}')`;
-  $('bfPhotoBg').classList.add('active-bg');
+}
 
-  document.querySelectorAll('#bfBgSwitcher .bg-chip').forEach((btn, idx) => {
-    if (btn.dataset.bg === 'random') {
-      btn.classList.remove('active');
-    } else {
-      btn.classList.toggle('active', idx === bgIndex);
-    }
+function applyBoyBackground() {
+  if (!BF_BG_PHOTOS.length) return;
+  ensureBackgroundLayers();
+  let nextIndex = bgIndex;
+  if (BF_BG_PHOTOS.length > 1) {
+    while (nextIndex === bgIndex) nextIndex = Math.floor(Math.random() * BF_BG_PHOTOS.length);
+  } else nextIndex = 0;
+  bgIndex = nextIndex;
+  const layers = $('bfPhotoBg').querySelectorAll('.bf-photo-layer');
+  const nextLayer = 1 - bgLayerIndex;
+  layers[nextLayer].style.backgroundImage = `url("${BF_BG_PHOTOS[bgIndex]}")`;
+  layers[nextLayer].classList.add('visible');
+  layers[bgLayerIndex].classList.remove('visible');
+  bgLayerIndex = nextLayer;
+  $('bfPhotoBg').classList.add('active-bg');
+}
+
+function startBoyBackgroundRotation() {
+  stopBoyBackgroundRotation();
+  if (theme !== 'boy' || !BF_BG_PHOTOS.length) return;
+  ensureBackgroundLayers();
+  const layers = $('bfPhotoBg').querySelectorAll('.bf-photo-layer');
+  bgIndex = Math.floor(Math.random() * BF_BG_PHOTOS.length);
+  layers.forEach((layer, i) => {
+    layer.style.backgroundImage = `url("${BF_BG_PHOTOS[bgIndex]}")`;
+    layer.classList.toggle('visible', i === 0);
   });
+  bgLayerIndex = 0;
+  $('bfPhotoBg').classList.add('active-bg');
+  if (BF_BG_PHOTOS.length > 1) bgTimer = setInterval(applyBoyBackground, 10000);
+}
+
+function stopBoyBackgroundRotation() {
+  if (bgTimer) { clearInterval(bgTimer); bgTimer = null; }
+  $('bfPhotoBg').classList.remove('active-bg');
 }
 
 function loadHistory() {
@@ -828,7 +863,7 @@ function setTheme(newTheme) {
   $('mapLink').style.display = 'none';
 
   if (isBoy) {
-    applyBoyBackground(bgIndex);
+    startBoyBackgroundRotation();
     bfMode = true;
     $('bfMode').checked = true;
     $('heroEmoji').textContent = '💙 🍽️ 🌍';
@@ -841,7 +876,7 @@ function setTheme(newTheme) {
     $('msgTitle').textContent = '💬 小寶貝偷偷對腦公大人說';
     $('message').textContent = BOY_FLIRTY_MESSAGES[Math.floor(Math.random() * BOY_FLIRTY_MESSAGES.length)];
   } else {
-    $('bfPhotoBg').classList.remove('active-bg');
+    stopBoyBackgroundRotation();
     gfMode = true;
     $('gfMode').checked = true;
     $('heroEmoji').textContent = '🎀 💗 🌍';
@@ -877,10 +912,12 @@ function matchBudget(price) {
   if (budget === '500') return price <= 500;
   if (budget === '800') return price <= 800;
   if (budget === '900+') return price >= 900;
+  if (budget === 'custom') return price <= customBudget;
   return true;
 }
 
 function getPool() {
+  if (budget === 'custom' && (!Number.isFinite(customBudget) || customBudget <= 0)) return [];
   const dict = getLocationDict();
   const macroRegion = dict[city]?.region || (scope === 'tw' ? '全臺' : '全球');
   const twRegions = ['全臺', '北部', '中部', '南部', '東部／離島'];
@@ -905,10 +942,6 @@ function getPool() {
 }
 
 function draw() {
-  if (theme === 'boy') {
-    applyBoyBackground('random');
-  }
-
   const pool = getPool();
   const locText = getLocationLabel();
   const displayLoc = locText || '全球各地';
@@ -967,12 +1000,6 @@ $('backHome').addEventListener('click', () => {
 $('btnGirl').addEventListener('click', () => setTheme('girl'));
 $('btnBoy').addEventListener('click', () => setTheme('boy'));
 
-$('bfBgSwitcher').addEventListener('click', e => {
-  const btn = e.target.closest('button[data-bg]');
-  if (!btn) return;
-  applyBoyBackground(btn.dataset.bg);
-});
-
 $('scopeTW').addEventListener('click', () => switchScope('tw'));
 $('scopeGlobal').addEventListener('click', () => switchScope('global'));
 
@@ -993,6 +1020,13 @@ $('budgets').addEventListener('click', e => {
   document.querySelectorAll('#budgets .chip').forEach(x => {
     x.classList.toggle('active', x === btn);
   });
+  $('customBudgetWrap').classList.toggle('hidden', budget !== 'custom');
+  if (budget === 'custom') $('customBudgetInput').focus();
+});
+
+$('customBudgetInput').addEventListener('input', e => {
+  const value = Number(e.target.value);
+  if (Number.isFinite(value) && value > 0) customBudget = value;
 });
 
 $('categories').addEventListener('click', e => {
@@ -1005,46 +1039,4 @@ $('categories').addEventListener('click', e => {
 });
 
 $('gfMode').addEventListener('change', e => {
-  gfMode = e.target.checked;
-  $('message').textContent = gfMode
-    ? '「已開啟小寶貝芋頭過敏過濾，絕對不會抽到芋頭相關餐點喔 ♡」'
-    : '「已關閉芋頭過敏過濾，全部甜品都開放囉！」';
-});
-
-$('bfMode').addEventListener('change', e => {
-  bfMode = e.target.checked;
-  $('message').textContent = bfMode
-    ? '「已開啟腦公大人忌口過濾：避開A菜、豬肉、菠菜、茄子、內臟類，但豬肝會幫你留著喔 💙」'
-    : '「已關閉忌口過濾，所有美食都能抽到囉！」';
-});
-
-$('draw').addEventListener('click', draw);
-$('again').addEventListener('click', draw);
-
-$('accept').addEventListener('click', () => {
-  if (!current) {
-    $('message').textContent = '「先按按鈕抽出一道美食，才能決定今晚吃什麼喔！」';
-    return;
-  }
-  const displayLoc = getLocationLabel() || '附近';
-  $('resultCard').classList.add('accepted');
-  $('resultLabel').textContent = '❤️ 就決定吃這道了！';
-  $('foodTag').textContent = `${displayLoc}・約 NT$${current[10]}/人・已鎖定開動 🍽️`;
-  $('message').textContent = theme === 'boy'
-    ? `「就這麼決定了，今晚腦公大人就在${displayLoc}吃 ${current[0]}！快出發吧，吃完記得跟小寶貝說 💙」`
-    : `「決定了！今晚小寶貝就在${displayLoc}吃 ${current[0]}！乖乖去吃飯，腦公大人愛你啾咪 ♡」`;
-});
-
-$('clear').addEventListener('click', () => {
-  history = [];
-  saveHistory();
-  renderHistory();
-});
-
-switchScope('tw');
-updateClock();
-setInterval(updateClock, 30000);
-renderHistory();
-</script>
-</body>
-</html>
+  gf... （2 KB 剩餘）
