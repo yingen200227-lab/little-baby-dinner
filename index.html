@@ -57,11 +57,31 @@ body{
   display:flex;
   justify-content:center;
   padding:20px 14px;
+  position:relative;
   transition:background .35s,color .35s;
 }
-.wrap{width:min(100%,600px)}
-
-/* 初始歡迎雙入口畫面 */
+.bf-photo-bg{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .45s ease;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  filter:blur(2px) saturate(0.95);
+}
+body.boy-theme .bf-photo-bg.active-bg{opacity:0.24}
+body.boy-theme::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background:linear-gradient(145deg, rgba(245,250,255,0.72), rgba(230,242,255,0.78));
+}
+.wrap{width:min(100%,600px);position:relative;z-index:1}
 .landing{
   min-height:86vh;
   display:flex;
@@ -80,23 +100,9 @@ body{
   box-shadow:0 16px 38px #c97b9624;
 }
 .landing-emoji{font-size:52px;letter-spacing:6px;margin-bottom:8px}
-.landing-title{
-  font-size:clamp(24px,6.5vw,32px);
-  font-weight:900;
-  color:#844b61;
-  margin:6px 0 8px;
-}
-.landing-sub{
-  font-size:14px;
-  color:#987785;
-  margin:0 0 24px;
-  line-height:1.6;
-}
-.portal-grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:14px;
-}
+.landing-title{font-size:clamp(24px,6.5vw,32px);font-weight:900;color:#844b61;margin:6px 0 8px}
+.landing-sub{font-size:14px;color:#987785;margin:0 0 24px;line-height:1.6}
+.portal-grid{display:grid;grid-template-columns:1fr;gap:14px}
 .portal-btn{
   border:0;
   border-radius:24px;
@@ -111,21 +117,11 @@ body{
 }
 .portal-btn:hover{transform:translateY(-2px)}
 .portal-btn:active{transform:scale(.98)}
-.portal-girl{
-  background:linear-gradient(120deg,#ffd8e6,#f7b6ce);
-  color:#7e3f57;
-  box-shadow:0 10px 22px #e98eaa3b;
-}
-.portal-boy{
-  background:linear-gradient(120deg,#d3e9ff,#9ecbff);
-  color:#234a73;
-  box-shadow:0 10px 22px #5b9bd53b;
-}
+.portal-girl{background:linear-gradient(120deg,#ffd8e6,#f7b6ce);color:#7e3f57;box-shadow:0 10px 22px #e98eaa3b}
+.portal-boy{background:linear-gradient(120deg,#d3e9ff,#9ecbff);color:#234a73;box-shadow:0 10px 22px #5b9bd53b}
 .portal-text h2{margin:0 0 5px;font-size:20px;font-weight:900}
 .portal-text p{margin:0;font-size:12.5px;opacity:.88;line-height:1.5}
 .portal-icon{font-size:40px;flex-shrink:0}
-
-/* 頂部主題切換與回首頁列 */
 .theme-bar{
   display:flex;
   gap:6px;
@@ -159,12 +155,7 @@ body{
   cursor:pointer;
   transition:.25s;
 }
-.theme-btn.active{
-  background:linear-gradient(100deg,var(--primary),var(--primary-dark));
-  color:#fff;
-  box-shadow:0 4px 12px var(--shadow);
-}
-
+.theme-btn.active{background:linear-gradient(100deg,var(--primary),var(--primary-dark));color:#fff;box-shadow:0 4px 12px var(--shadow)}
 .hero{
   text-align:center;
   padding:26px 18px 22px;
@@ -178,14 +169,7 @@ body{
 .hero .emoji{font-size:44px;letter-spacing:5px}
 .hero h1{font-size:clamp(24px,6.5vw,33px);margin:8px 0 5px;font-weight:900;letter-spacing:1px}
 .hero p{margin:6px 0 0;font-size:14px}
-
-.live-status{
-  margin-top:14px;
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:8px;
-}
+.live-status{margin-top:14px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
 .badge{
   display:inline-flex;
   align-items:center;
@@ -197,7 +181,19 @@ body{
   font-weight:700;
   color:var(--deep);
 }
-
+.bf-bg-switcher{margin-top:12px;display:none;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px}
+body.boy-theme .bf-bg-switcher{display:flex}
+.bg-chip{
+  border:1px solid var(--line);
+  background:#ffffffc9;
+  color:var(--deep);
+  border-radius:99px;
+  padding:5px 11px;
+  font-size:11.5px;
+  font-weight:750;
+  cursor:pointer;
+}
+.bg-chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 .panel{
   margin-top:15px;
   background:#ffffffe0;
@@ -207,13 +203,7 @@ body{
   box-shadow:0 8px 25px var(--shadow);
 }
 .label{font-size:14px;font-weight:800;margin:0 0 11px;color:var(--deep)}
-
-.scope-tabs{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-bottom:12px;
-}
+.scope-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .scope-btn{
   border:1.5px solid var(--line);
   background:#fff;
@@ -224,22 +214,9 @@ body{
   font-weight:800;
   cursor:pointer;
 }
-.scope-btn.active{
-  background:var(--soft);
-  border-color:var(--primary);
-  color:var(--deep);
-}
-
-.loc-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.select-wrap{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-}
+.scope-btn.active{background:var(--soft);border-color:var(--primary);color:var(--deep)}
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.select-wrap{display:flex;flex-direction:column;gap:5px}
 .select-wrap span{font-size:11px;color:var(--subtext);font-weight:700;padding-left:4px}
 select{
   width:100%;
@@ -263,7 +240,6 @@ select:focus{border-color:var(--primary)}
   border-radius:12px;
   line-height:1.5;
 }
-
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{
   border:1px solid var(--line);
@@ -276,18 +252,8 @@ select:focus{border-color:var(--primary)}
   transition:.15s;
 }
 .chip:hover{border-color:var(--primary)}
-.chip.active{
-  background:var(--primary);
-  color:#fff;
-  border-color:var(--primary);
-  box-shadow:0 4px 10px var(--shadow);
-}
-
-.guard-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
+.chip.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 10px var(--shadow)}
+.guard-list{display:flex;flex-direction:column;gap:10px}
 .bf-box{
   display:flex;
   flex-direction:column;
@@ -297,30 +263,12 @@ select:focus{border-color:var(--primary)}
   border-radius:18px;
   padding:13px 14px;
 }
-.bf-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-}
+.bf-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .bf-title{font-size:14px;font-weight:850;color:var(--deep)}
 .bf-note{font-size:12px;color:var(--subtext);line-height:1.55}
-.switch{
-  position:relative;
-  display:inline-block;
-  width:48px;
-  height:26px;
-  flex-shrink:0;
-}
+.switch{position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0}
 .switch input{opacity:0;width:0;height:0}
-.slider{
-  position:absolute;
-  cursor:pointer;
-  inset:0;
-  background:#d5dce4;
-  transition:.2s;
-  border-radius:99px;
-}
+.slider{position:absolute;cursor:pointer;inset:0;background:#d5dce4;transition:.2s;border-radius:99px}
 .slider:before{
   position:absolute;
   content:"";
@@ -335,7 +283,6 @@ select:focus{border-color:var(--primary)}
 }
 input:checked + .slider{background:var(--primary)}
 input:checked + .slider:before{transform:translateX(22px)}
-
 .result{
   margin-top:16px;
   background:linear-gradient(160deg,#fff,var(--soft));
@@ -352,16 +299,8 @@ input:checked + .slider:before{transform:translateX(22px)}
   overflow:hidden;
   transition:border-color .2s,box-shadow .2s;
 }
-.result.accepted{
-  border-style:solid;
-  box-shadow:0 10px 24px var(--shadow);
-}
-.result:before,.result:after{
-  content:"♡";
-  position:absolute;
-  color:var(--line);
-  font-size:27px;
-}
+.result.accepted{border-style:solid;box-shadow:0 10px 24px var(--shadow)}
+.result:before,.result:after{content:"♡";position:absolute;color:var(--line);font-size:27px}
 .result:before{top:12px;left:17px}
 .result:after{bottom:9px;right:19px}
 .small{font-size:12px;color:var(--subtext)}
@@ -394,7 +333,6 @@ input:checked + .slider:before{transform:translateX(22px)}
   box-shadow:0 3px 10px var(--shadow);
 }
 .map-link:hover{background:var(--soft)}
-
 .main{
   width:100%;
   border:0;
@@ -418,7 +356,6 @@ input:checked + .slider:before{transform:translateX(22px)}
   cursor:pointer;
 }
 .secondary:hover{background:var(--soft)}
-
 .message{
   font-size:14px;
   line-height:1.8;
@@ -446,8 +383,9 @@ button:active{transform:scale(.97)}
 </style>
 </head>
 <body>
+<div class="bf-photo-bg" id="bfPhotoBg" aria-hidden="true"></div>
+
 <main class="wrap">
-  <!-- 初始歡迎雙入口畫面 -->
   <section class="landing" id="landingView">
     <div class="landing-card">
       <div class="landing-emoji">🎀 💗 💙</div>
@@ -465,7 +403,7 @@ button:active{transform:scale(.97)}
         <button class="portal-btn portal-boy" id="enterBoy">
           <div class="portal-text">
             <h2>💙 腦公大人今天吃什麼呢~</h2>
-            <p>藍色專屬模式・避開A菜/豬肉/菠菜/茄子/內臟（保留豬肝！）</p>
+            <p>藍色專屬模式・含腦公背景照・避開A菜/豬肉/菠菜/茄子/內臟（保留豬肝！）</p>
           </div>
           <div class="portal-icon">🐻</div>
         </button>
@@ -473,7 +411,6 @@ button:active{transform:scale(.97)}
     </div>
   </section>
 
-  <!-- 主抽籤頁面 -->
   <div id="appView" class="hidden">
     <div class="theme-bar" role="tablist" aria-label="情侶視角切換">
       <button class="home-btn" id="backHome" title="回到選擇頁面">🏠 首頁</button>
@@ -489,9 +426,14 @@ button:active{transform:scale(.97)}
         <span class="badge" id="clockBadge">🕒 載入時間中...</span>
         <span class="badge" id="weatherBadge">🌤️ 載入當地天氣...</span>
       </div>
+      <div class="bf-bg-switcher" id="bfBgSwitcher" aria-label="切換腦公背景照片">
+        <button class="bg-chip active" data-bg="0">📸 照片 1</button>
+        <button class="bg-chip" data-bg="1">😜 照片 2</button>
+        <button class="bg-chip" data-bg="2">🍳 照片 3</button>
+        <button class="bg-chip" data-bg="random">🎲 隨機換一張</button>
+      </div>
     </header>
 
-    <!-- 全臺 & 全球地區選擇 -->
     <section class="panel" aria-label="地區選擇">
       <p class="label">📍 選擇目前所在位置（支援全臺與全球各國 Google Maps）</p>
       <div class="scope-tabs">
@@ -511,7 +453,6 @@ button:active{transform:scale(.97)}
       <div class="weather-tip" id="weatherTip">🌡️ 正在取得當地即時氣溫，幫你搭配最適合的餐點...</div>
     </section>
 
-    <!-- 個人預算價位（臺幣） -->
     <section class="panel" aria-label="預算價位選擇">
       <p class="label">💰 個人預算價位（新臺幣 NT$ 估算）</p>
       <div class="chips" id="budgets">
@@ -523,7 +464,6 @@ button:active{transform:scale(.97)}
       </div>
     </section>
 
-    <!-- 美食分類 -->
     <section class="panel" aria-label="美食分類">
       <p class="label">🍽️ 今天想吃哪一類？</p>
       <div class="chips" id="categories">
@@ -540,7 +480,6 @@ button:active{transform:scale(.97)}
       </div>
     </section>
 
-    <!-- 情侶專屬過敏與忌口過濾 -->
     <section class="panel" aria-label="過敏與忌口設定">
       <p class="label">🛡️ 情侶專屬安全守護</p>
       <div class="guard-list">
@@ -572,7 +511,6 @@ button:active{transform:scale(.97)}
       </div>
     </section>
 
-    <!-- 抽選結果卡片 -->
     <section class="result" id="resultCard" aria-live="polite">
       <div class="small" id="resultLabel">噔噔！今晚的命定晚餐會是……</div>
       <div class="foodemoji" id="foodEmoji">🤔</div>
@@ -584,7 +522,6 @@ button:active{transform:scale(.97)}
       </a>
     </section>
 
-    <!-- 操作按鈕 -->
     <section style="margin-top:14px">
       <button class="main" id="draw">💗 腦公大人趕快幫小寶貝決定吧！</button>
       <div class="actions">
@@ -593,13 +530,11 @@ button:active{transform:scale(.97)}
       </div>
     </section>
 
-    <!-- 曖昧情話對話框 -->
     <section class="panel">
       <p class="label" id="msgTitle">💌 腦公大人偷偷對小寶貝說</p>
       <div class="message" id="message">「親愛的小寶貝，不可以餓肚子喔！快讓腦公大人幫你挑一份好吃的，吃完才有力氣想我 ♡」</div>
     </section>
 
-    <!-- 歷史紀錄 -->
     <section class="panel">
       <p class="label">🐾 今晚抽過的美食紀錄</p>
       <div class="history" id="history">尚無紀錄，快來抽一個！</div>
@@ -611,7 +546,12 @@ button:active{transform:scale(.97)}
 </main>
 
 <script>
-// 1. 全臺 22 縣市 + 行政區
+const BF_BG_PHOTOS = [
+  'bf-1.jpeg',
+  'bf-2.jpeg',
+  'bf-3.jpeg'
+];
+
 const TAIWAN_LOCATIONS = {
   '全臺不限': { region: '全臺', lat: 23.9738, lon: 120.9820, districts: ['全區隨機'] },
   '台北市': { region: '北部', lat: 25.0330, lon: 121.5654, districts: ['全區', '中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'] },
@@ -638,7 +578,6 @@ const TAIWAN_LOCATIONS = {
   '連江縣': { region: '東部／離島', lat: 26.1505, lon: 119.9499, districts: ['全區', '南竿鄉', '北竿鄉', '莒光鄉', '東引鄉'] }
 };
 
-// 2. 全球各國 + 熱門城市
 const GLOBAL_LOCATIONS = {
   '全球不限': { region: '全球', lat: 25.0330, lon: 121.5654, districts: ['全球隨機'] },
   '日本': { region: '日本', lat: 35.6762, lon: 139.6503, districts: ['東京', '大阪', '京都', '沖繩', '北海道札幌', '福岡', '名古屋'] },
@@ -674,7 +613,6 @@ const FOODS = [
   ['珍珠奶茶','飲料甜點','全球','🧋','經典手搖飲，甜度冰塊隨心挑','飲料時間',true,'',true,'避開芋泥波波或小芋圓配料',75],
   ['傳統豆花','飲料甜點','南部','🍮','滑嫩豆花配花生、粉圓或紅豆，甜而不膩','甜品時間',true,'',true,'配料選花生/粉圓/綠豆，千萬別加芋圓！',65],
   ['芋圓仙草','飲料甜點','中部','🍧','Q彈芋圓搭配滑嫩仙草，台灣經典甜品','台灣甜品',true,'',false,'含有芋圓（芋頭成分）',75],
-
   ['海南雞飯','異國南洋','東南亞','🍗','滑嫩白斬雞配雞油香飯與特製辣椒醬，百吃不膩','南洋必吃',true,'純雞肉料理超安全！',true,'',150],
   ['椰漿飯 Nasi Lemak','異國南洋','東南亞','🍛','香濃椰漿飯配炸雞腿、花生小魚乾與參巴醬','大馬國民美食',true,'選炸雞腿或仁當牛肉，避開豬肉配菜',true,'',140],
   ['肉骨茶','異國南洋','東南亞','🍲','藥膳或胡椒香氣湯頭，暖胃又滋補','南洋經典',false,'傳統肉骨茶以豬排骨與豬內臟為主',true,'',280],
@@ -684,7 +622,6 @@ const FOODS = [
   ['韓式石鍋拌飯／烤牛肉','日韓料理','韓國','🥘','鍋巴香氣十足搭配嫩牛肉與韓式辣醬','韓式經典',true,'點牛肉或雞肉口味，避開豬肉與菠菜/茄子配菜',true,'',280],
   ['美式經典漢堡餐','異國南洋','歐美','🍔','多汁厚切純牛肉漢堡配現炸金黃薯條','歐美人氣',true,'點純牛肉堡或炸雞堡，請店家不加培根（豬肉）',true,'',360],
   ['義式松露野菇燉飯／義大利麵','異國南洋','歐美','🍝','濃郁奶油或清炒義麵，搭配嫩煎雞胸或海鮮','歐陸浪漫餐',true,'選海鮮、雞肉或野菇口味，避開培根與茄子',true,'',420],
-
   ['香煎鮭魚丼','飯類','北部','🍣','鮭魚油脂豐富，搭配白飯與清爽配菜','清爽飯食',true,'避開不愛吃的蔬菜',true,'',280],
   ['個人小火鍋','火鍋','全臺','🍲','一人一鍋想吃什麼自己選，雞肉、海鮮、豬肝都能搭','暖心首選',true,'菜盤避開A菜、菠菜、茄子與豬肉片，豬肝可煮！',true,'菜盤若有芋頭塊記得先請店員換掉',260],
   ['酸菜白肉鍋','火鍋','北部','🥬','酸香湯頭配料豐富，暖胃又開胃','暖心鍋物',false,'傳統酸菜白肉鍋以豬肉片為主',true,'注意火鍋料不含芋頭丸',380],
@@ -695,13 +632,11 @@ const FOODS = [
   ['日式雞白湯拉麵','日韓料理','日本','🍜','濃郁雞白湯頭搭配舒肥雞胸與溏心蛋，暖呼呼享受','日式享受',true,'選雞肉叉燒款，避開豬肉叉燒',true,'',310],
   ['韓式炸雞','日韓料理','韓國','🍗','甜辣或洋釀醬汁包裹酥脆雞肉，超唰嘴','韓式人氣',true,'純炸雞款安全，配醃蘿蔔很解膩',true,'',360],
   ['迴轉／綜合壽司','日韓料理','日本','🍣','鮭魚、鮪魚、玉子燒與蝦壽司，清爽有飽足感','清爽選擇',true,'避開豬肉相關壽司捲即可',true,'',340],
-
   ['石頭火鍋聚餐','火鍋','全臺','🍲','先爆香再加入高湯，肉盤海鮮超豐盛','台式火鍋',true,'肉盤選牛肉、雞肉或海鮮，避開豬肉與不愛吃的菜',true,'菜盤若有芋頭先挑掉喔',620],
   ['麻辣鴛鴦鍋','火鍋','全臺','🌶️','香麻湯底涮牛肉與鴨血豆腐超夠味','重口味之選',true,'選牛肉/雞肉/海鮮，避開豬肉與其他內臟',true,'火鍋料避開芋頭貢丸',720],
   ['個人燒肉套餐','燒肉排餐','全臺','🥩','一人一爐烤牛五花、雞腿肉與海鮮，儀式感滿滿','燒肉享受',true,'套餐選全牛或牛雞雙拼，避開豬五花與內臟拼盤',true,'甜點若附芋泥類記得替換',680],
   ['日式壽喜燒吃到飽','日韓料理','日本','🥘','甜鹹醬汁涮嫩牛肉片沾蛋液，大口吃肉超過癮','聚餐首選',true,'專攻牛肉與雞腿肉，避開豬肉盤與不愛吃的青菜',true,'',650],
   ['美式經典牛排餐','燒肉排餐','全球','🍽️','厚切沙朗或菲力牛排配酥皮濃湯與沙拉吧','約會排餐',true,'點牛排或雞排，沙拉吧避開不愛吃的蔬菜',true,'甜點區避開芋頭口味',750],
-
   ['頂級和牛燒肉盛宴','燒肉排餐','全球','🔥','專人代烤或頂級和牛拼盤，入口即化的約會首選','奢華約會',true,'點全牛與海鮮組合，避開豬肉及內臟拼盤',true,'飯後甜點避開芋頭製品',1450],
   ['精緻日式無菜單料理','日韓料理','日本','🍣','主廚嚴選當季生魚片、握壽司與炙燒海鮮','浪漫紀念日',true,'可提前告知師傅不吃豬肉與內臟',true,'若有芋頭天婦羅或芋泥甜點請師傅替換',1600],
   ['海陸活體蒸氣海鮮鍋','火鍋','南部','🦞','龍蝦、鮑魚、鮮魚層層清蒸，精華煮粥鮮甜破表','海味饗宴',true,'純海鮮與粥品，避開豬肉配料即可',true,'確認粥底或配菜無芋頭塊',1300],
@@ -727,7 +662,7 @@ const BOY_FLIRTY_MESSAGES = [
   '「今天也超棒的，快去吃這道，等下換小寶貝來討獎勵 💙」'
 ];
 
-const STORAGE_KEY = 'couple_dinner_history_v6';
+const STORAGE_KEY = 'couple_dinner_history_v8';
 let theme = 'girl';
 let scope = 'tw';
 let city = '新北市';
@@ -737,9 +672,29 @@ let category = '全部';
 let gfMode = true;
 let bfMode = false;
 let current = null;
+let bgIndex = 0;
 let history = loadHistory();
 
 const $ = id => document.getElementById(id);
+
+function applyBoyBackground(index) {
+  if (index === 'random') {
+    bgIndex = Math.floor(Math.random() * BF_BG_PHOTOS.length);
+  } else {
+    bgIndex = Number(index) % BF_BG_PHOTOS.length;
+  }
+  const photoUrl = BF_BG_PHOTOS[bgIndex];
+  $('bfPhotoBg').style.backgroundImage = `url('${photoUrl}')`;
+  $('bfPhotoBg').classList.add('active-bg');
+
+  document.querySelectorAll('#bfBgSwitcher .bg-chip').forEach((btn, idx) => {
+    if (btn.dataset.bg === 'random') {
+      btn.classList.remove('active');
+    } else {
+      btn.classList.toggle('active', idx === bgIndex);
+    }
+  });
+}
 
 function loadHistory() {
   try {
@@ -873,6 +828,7 @@ function setTheme(newTheme) {
   $('mapLink').style.display = 'none';
 
   if (isBoy) {
+    applyBoyBackground(bgIndex);
     bfMode = true;
     $('bfMode').checked = true;
     $('heroEmoji').textContent = '💙 🍽️ 🌍';
@@ -885,6 +841,7 @@ function setTheme(newTheme) {
     $('msgTitle').textContent = '💬 小寶貝偷偷對腦公大人說';
     $('message').textContent = BOY_FLIRTY_MESSAGES[Math.floor(Math.random() * BOY_FLIRTY_MESSAGES.length)];
   } else {
+    $('bfPhotoBg').classList.remove('active-bg');
     gfMode = true;
     $('gfMode').checked = true;
     $('heroEmoji').textContent = '🎀 💗 🌍';
@@ -948,6 +905,10 @@ function getPool() {
 }
 
 function draw() {
+  if (theme === 'boy') {
+    applyBoyBackground('random');
+  }
+
   const pool = getPool();
   const locText = getLocationLabel();
   const displayLoc = locText || '全球各地';
@@ -996,7 +957,6 @@ function draw() {
   renderHistory();
 }
 
-// 事件監聽
 $('enterGirl').addEventListener('click', () => enterApp('girl'));
 $('enterBoy').addEventListener('click', () => enterApp('boy'));
 $('backHome').addEventListener('click', () => {
@@ -1006,6 +966,12 @@ $('backHome').addEventListener('click', () => {
 
 $('btnGirl').addEventListener('click', () => setTheme('girl'));
 $('btnBoy').addEventListener('click', () => setTheme('boy'));
+
+$('bfBgSwitcher').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-bg]');
+  if (!btn) return;
+  applyBoyBackground(btn.dataset.bg);
+});
 
 $('scopeTW').addEventListener('click', () => switchScope('tw'));
 $('scopeGlobal').addEventListener('click', () => switchScope('global'));
@@ -1075,7 +1041,6 @@ $('clear').addEventListener('click', () => {
   renderHistory();
 });
 
-// 初始化
 switchScope('tw');
 updateClock();
 setInterval(updateClock, 30000);
