@@ -1039,4 +1039,46 @@ $('categories').addEventListener('click', e => {
 });
 
 $('gfMode').addEventListener('change', e => {
-  gf... （2 KB 剩餘）
+  gfMode = e.target.checked;
+  $('message').textContent = gfMode
+    ? '「已開啟小寶貝芋頭過敏過濾，絕對不會抽到芋頭相關餐點喔 ♡」'
+    : '「已關閉芋頭過敏過濾，全部甜品都開放囉！」';
+});
+
+$('bfMode').addEventListener('change', e => {
+  bfMode = e.target.checked;
+  $('message').textContent = bfMode
+    ? '「已開啟腦公大人忌口過濾：避開A菜、豬肉、菠菜、茄子、內臟類，但豬肝會幫你留著喔 💙」'
+    : '「已關閉忌口過濾，所有美食都能抽到囉！」';
+});
+
+$('draw').addEventListener('click', draw);
+$('again').addEventListener('click', draw);
+
+$('accept').addEventListener('click', () => {
+  if (!current) {
+    $('message').textContent = '「先按按鈕抽出一道美食，才能決定今晚吃什麼喔！」';
+    return;
+  }
+  const displayLoc = getLocationLabel() || '附近';
+  $('resultCard').classList.add('accepted');
+  $('resultLabel').textContent = '❤️ 就決定吃這道了！';
+  $('foodTag').textContent = `${displayLoc}・約 NT$${current[10]}/人・已鎖定開動 🍽️`;
+  $('message').textContent = theme === 'boy'
+    ? `「就這麼決定了，今晚腦公大人就在${displayLoc}吃 ${current[0]}！快出發吧，吃完記得跟小寶貝說 💙」`
+    : `「決定了！今晚小寶貝就在${displayLoc}吃 ${current[0]}！乖乖去吃飯，腦公大人愛你啾咪 ♡」`;
+});
+
+$('clear').addEventListener('click', () => {
+  history = [];
+  saveHistory();
+  renderHistory();
+});
+
+switchScope('tw');
+updateClock();
+setInterval(updateClock, 30000);
+renderHistory();
+</script>
+</body>
+</html>
