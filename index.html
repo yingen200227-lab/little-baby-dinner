@@ -181,4 +181,701 @@ select:focus{border-color:var(--primary)}
 .chip.active{
   background:var(--primary);
   color:#fff;
-  border-color:var
+  border-color:var(--primary);
+  box-shadow:0 4px 10px var(--shadow);
+}
+
+.guard-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.bf-box{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:13px 14px;
+}
+.bf-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.bf-title{font-size:14px;font-weight:850;color:var(--deep)}
+.bf-note{font-size:12px;color:var(--subtext);line-height:1.55}
+.switch{
+  position:relative;
+  display:inline-block;
+  width:48px;
+  height:26px;
+  flex-shrink:0;
+}
+.switch input{opacity:0;width:0;height:0}
+.slider{
+  position:absolute;
+  cursor:pointer;
+  inset:0;
+  background:#d5dce4;
+  transition:.2s;
+  border-radius:99px;
+}
+.slider:before{
+  position:absolute;
+  content:"";
+  height:20px;
+  width:20px;
+  left:3px;
+  bottom:3px;
+  background:#fff;
+  transition:.2s;
+  border-radius:50%;
+  box-shadow:0 2px 5px #0000001a;
+}
+input:checked + .slider{background:var(--primary)}
+input:checked + .slider:before{transform:translateX(22px)}
+
+.result{
+  margin-top:16px;
+  background:linear-gradient(160deg,#fff,var(--soft));
+  border:1.5px dashed var(--primary);
+  border-radius:25px;
+  padding:26px 18px;
+  text-align:center;
+  min-height:245px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;
+}
+.result.accepted{
+  border-style:solid;
+  box-shadow:0 10px 24px var(--shadow);
+}
+.result:before,.result:after{
+  content:"♡";
+  position:absolute;
+  color:var(--line);
+  font-size:27px;
+}
+.result:before{top:12px;left:17px}
+.result:after{bottom:9px;right:19px}
+.small{font-size:12px;color:var(--subtext)}
+.foodemoji{font-size:60px;margin:10px 0;transition:transform .25s ease}
+.foodemoji.pop{transform:scale(1.16) rotate(-6deg)}
+.foodname{font-size:28px;font-weight:900;color:var(--deep)}
+.desc{font-size:14px;color:var(--subtext);margin-top:8px;max-width:42ch;line-height:1.6}
+.tag{
+  font-size:11px;
+  color:var(--tag-text);
+  margin-top:12px;
+  background:var(--tag-bg);
+  padding:7px 13px;
+  border-radius:99px;
+  font-weight:700;
+}
+.map-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:12px;
+  padding:8px 15px;
+  border-radius:99px;
+  background:#fff;
+  border:1px solid var(--line);
+  color:var(--deep);
+  font-size:12px;
+  font-weight:800;
+  text-decoration:none;
+  box-shadow:0 3px 10px var(--shadow);
+}
+.map-link:hover{background:var(--soft)}
+
+.main{
+  width:100%;
+  border:0;
+  border-radius:17px;
+  padding:16px;
+  background:linear-gradient(100deg,var(--primary),var(--primary-dark));
+  color:#fff;
+  font-size:16px;
+  font-weight:900;
+  cursor:pointer;
+  box-shadow:0 7px 15px var(--shadow);
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.secondary{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:13px 8px;
+  color:var(--text);
+  font-weight:750;
+  cursor:pointer;
+}
+.secondary:hover{background:var(--soft)}
+
+.message{
+  font-size:14px;
+  line-height:1.8;
+  color:var(--text);
+  background:var(--soft);
+  border-radius:15px;
+  padding:13px 15px;
+  font-weight:500;
+}
+.history{font-size:12px;color:var(--subtext);text-align:center;line-height:1.9;min-height:22px}
+.clear{
+  display:block;
+  margin:10px auto 0;
+  border:0;
+  background:none;
+  text-decoration:underline;
+  color:var(--subtext);
+  font-size:12px;
+  cursor:pointer;
+}
+button{transition:transform .15s,filter .15s}
+button:active{transform:scale(.97)}
+.foot{text-align:center;color:var(--subtext);font-size:12px;margin:18px 0 8px;line-height:1.8}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <!-- 粉紅女友 / 藍色男友 主題切換 -->
+  <div class="theme-bar" role="tablist" aria-label="情侶視角切換">
+    <button class="theme-btn active" id="btnGirl" role="tab" aria-selected="true">💖 女友愛心模式（粉色系）</button>
+    <button class="theme-btn" id="btnBoy" role="tab" aria-selected="false">💙 男友專屬模式（藍色系）</button>
+  </div>
+
+  <header class="hero">
+    <div class="emoji" id="heroEmoji">🎀 💗 🇹🇼</div>
+    <h1 id="heroTitle">小寶貝今晚吃什麼？</h1>
+    <p id="heroSub">女友愛心餐單・全臺地圖美食抽選</p>
+    <div class="live-status">
+      <span class="badge" id="clockBadge">🕒 載入時間中...</span>
+      <span class="badge" id="weatherBadge">🌤️ 載入當地天氣...</span>
+    </div>
+  </header>
+
+  <!-- 全臺 Google Maps 縣市與行政區選擇 -->
+  <section class="panel" aria-label="全臺地區選擇">
+    <p class="label">📍 選擇目前所在位置（對應 Google Maps 區域）</p>
+    <div class="loc-grid">
+      <div class="select-wrap">
+        <span>縣市</span>
+        <select id="citySelect"></select>
+      </div>
+      <div class="select-wrap">
+        <span>鄉鎮市區</span>
+        <select id="distSelect"></select>
+      </div>
+    </div>
+    <div class="weather-tip" id="weatherTip">🌡️ 正在取得當地即時氣溫，幫你搭配最適合的餐點...</div>
+  </section>
+
+  <!-- 個人預算價位（臺幣） -->
+  <section class="panel" aria-label="預算價位選擇">
+    <p class="label">💰 個人預算價位（新臺幣 NT$）</p>
+    <div class="chips" id="budgets">
+      <button class="chip active" data-budget="all">✨ 不限預算</button>
+      <button class="chip" data-budget="200">💵 200以下</button>
+      <button class="chip" data-budget="500">💴 500以下</button>
+      <button class="chip" data-budget="800">💶 800以下</button>
+      <button class="chip" data-budget="900+">💎 900以上</button>
+    </div>
+  </section>
+
+  <!-- 美食分類 -->
+  <section class="panel" aria-label="美食分類">
+    <p class="label">🍽️ 今天想吃哪一類？</p>
+    <div class="chips" id="categories">
+      <button class="chip active" data-cat="全部">🎲 全部</button>
+      <button class="chip" data-cat="夜市小吃">🏮 夜市小吃</button>
+      <button class="chip" data-cat="飯類">🍚 飯類</button>
+      <button class="chip" data-cat="麵食">🍜 麵食</button>
+      <button class="chip" data-cat="火鍋">🍲 火鍋</button>
+      <button class="chip" data-cat="台式料理">🥢 台式料理</button>
+      <button class="chip" data-cat="日韓料理">🍣 日韓料理</button>
+      <button class="chip" data-cat="燒肉排餐">🥩 燒肉排餐</button>
+      <button class="chip" data-cat="飲料甜點">🧋 飲料甜點</button>
+    </div>
+  </section>
+
+  <!-- 情侶專屬過敏與忌口過濾 -->
+  <section class="panel" aria-label="過敏與忌口設定">
+    <p class="label">🛡️ 情侶專屬安全守護</p>
+    <div class="guard-list">
+      <div class="bf-box">
+        <div class="bf-top">
+          <span class="bf-title">🌸 女友芋頭過敏過濾</span>
+          <label class="switch">
+            <input type="checkbox" id="gfMode" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="bf-note">
+          自動排除<strong>芋頭、芋圓、芋泥</strong>等含芋頭品項，並對甜品或火鍋附上「勿加芋頭」提醒。
+        </div>
+      </div>
+
+      <div class="bf-box">
+        <div class="bf-top">
+          <span class="bf-title">💙 男友忌口過濾</span>
+          <label class="switch">
+            <input type="checkbox" id="bfMode">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="bf-note">
+          自動避開：<strong>A菜、豬肉、菠菜、茄子、內臟類</strong>（但<strong>保留豬肝</strong>！）。切換到藍色男友模式時會自動開啟。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 抽選結果卡片 -->
+  <section class="result" id="resultCard" aria-live="polite">
+    <div class="small" id="resultLabel">噔噔！今晚的命定晚餐會是……</div>
+    <div class="foodemoji" id="foodEmoji">🤔</div>
+    <div class="foodname" id="foodName">還沒決定要吃什麼！</div>
+    <div class="desc" id="foodDesc">選好你的縣市、預算與模式，按下按鈕開始心動抽選吧！</div>
+    <div class="tag" id="foodTag">全臺美食隨機抽選</div>
+    <a class="map-link" id="mapLink" href="https://www.google.com/maps" target="_blank" rel="noopener" style="display:none">
+      🗺️ 在 Google Maps 搜尋附近店家
+    </a>
+  </section>
+
+  <!-- 操作按鈕 -->
+  <section style="margin-top:14px">
+    <button class="main" id="draw">💗 女友幫小寶貝決定今晚吃什麼！</button>
+    <div class="actions">
+      <button class="secondary" id="again">🔄 換一個，再抽一次</button>
+      <button class="secondary" id="accept">❤️ 就決定吃這個</button>
+    </div>
+  </section>
+
+  <!-- 曖昧情話對話框 -->
+  <section class="panel">
+    <p class="label" id="msgTitle">💌 女友偷偷對你說</p>
+    <div class="message" id="message">「親愛的小寶貝，不可以餓肚子喔！快讓我幫你挑一份好吃的，吃完才有力氣想我 ♡」</div>
+  </section>
+
+  <!-- 歷史紀錄 -->
+  <section class="panel">
+    <p class="label">🐾 今晚抽過的美食紀錄</p>
+    <div class="history" id="history">尚無紀錄，快來抽一個！</div>
+    <button class="clear" id="clear">清除抽選紀錄</button>
+  </section>
+
+  <div class="foot" id="footText">Made with ♡ for my favorite person<br>不管在哪個城市，都要乖乖吃飯 🎀</div>
+</main>
+
+<script>
+const TAIWAN_LOCATIONS = {
+  '全臺不限': { region: '全臺', lat: 23.9738, lon: 120.9820, districts: ['全區隨機'] },
+  '台北市': { region: '北部', lat: 25.0330, lon: 121.5654, districts: ['全區', '中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'] },
+  '新北市': { region: '北部', lat: 25.0120, lon: 121.4657, districts: ['全區', '新莊區', '板橋區', '三重區', '中和區', '永和區', '新店區', '土城區', '蘆洲區', '樹林區', '汐止區', '淡水區', '林口區', '三峽區'] },
+  '基隆市': { region: '北部', lat: 25.1276, lon: 121.7392, districts: ['全區', '仁愛區', '信義區', '中正區', '中山區', '安樂區', '暖暖區', '七堵區'] },
+  '桃園市': { region: '北部', lat: 24.9936, lon: 121.3010, districts: ['全區', '桃園區', '中壢區', '平鎮區', '八德區', '楊梅區', '蘆竹區', '龜山區', '龍潭區', '大溪區'] },
+  '新竹市': { region: '北部', lat: 24.8138, lon: 120.9675, districts: ['全區', '東區', '北區', '香山區'] },
+  '新竹縣': { region: '北部', lat: 24.8387, lon: 121.0177, districts: ['全區', '竹北市', '竹東鎮', '新埔鎮', '關西鎮', '湖口鄉', '新豐鄉'] },
+  '苗栗縣': { region: '中部', lat: 24.5602, lon: 120.8214, districts: ['全區', '苗栗市', '頭份市', '竹南鎮', '苑裡鎮', '通霄鎮', '後龍鎮', '卓蘭鎮', '公館鄉', '三義鄉'] },
+  '台中市': { region: '中部', lat: 24.1477, lon: 120.6736, districts: ['全區', '西屯區', '北區', '南屯區', '西區', '北屯區', '中區', '東區', '南區', '豐原區', '大里區', '太平區', '清水區', '沙鹿區'] },
+  '彰化縣': { region: '中部', lat: 24.0518, lon: 120.5161, districts: ['全區', '彰化市', '員林市', '和美鎮', '鹿港鎮', '溪湖鎮', '田中鎮', '北斗鎮'] },
+  '南投縣': { region: '中部', lat: 23.9609, lon: 120.9718, districts: ['全區', '南投市', '埔里鎮', '草屯鎮', '竹山鎮', '集集鎮', '魚池鄉'] },
+  '雲林縣': { region: '中部', lat: 23.7092, lon: 120.4313, districts: ['全區', '斗六市', '斗南鎮', '虎尾鎮', '西螺鎮', '土庫鎮', '北港鎮'] },
+  '嘉義市': { region: '南部', lat: 23.4801, lon: 120.4491, districts: ['全區', '東區', '西區'] },
+  '嘉義縣': { region: '南部', lat: 23.4518, lon: 120.2555, districts: ['全區', '太保市', '朴子市', '布袋鎮', '大林鎮', '民雄鄉', '中埔鄉'] },
+  '台南市': { region: '南部', lat: 22.9999, lon: 120.2269, districts: ['全區', '中西區', '東區', '南區', '北區', '安平區', '安南區', '永康區', '歸仁區', '新營區', '善化區'] },
+  '高雄市': { region: '南部', lat: 22.6273, lon: 120.3014, districts: ['全區', '苓雅區', '前鎮區', '三民區', '左營區', '鼓山區', '鳳山區', '楠梓區', '新興區', '前金區', '鹽埕區', '小港區'] },
+  '屏東縣': { region: '南部', lat: 22.6762, lon: 120.4929, districts: ['全區', '屏東市', '潮州鎮', '東港鎮', '恆春鎮', '萬丹鄉', '內埔鄉'] },
+  '宜蘭縣': { region: '東部／離島', lat: 24.7021, lon: 121.7377, districts: ['全區', '宜蘭市', '羅東鎮', '蘇澳鎮', '頭城鎮', '礁溪鄉', '冬山鄉'] },
+  '花蓮縣': { region: '東部／離島', lat: 23.9872, lon: 121.6015, districts: ['全區', '花蓮市', '鳳林鎮', '玉里鎮', '新城鄉', '吉安鄉', '壽豐鄉'] },
+  '台東縣': { region: '東部／離島', lat: 22.7583, lon: 121.1444, districts: ['全區', '台東市', '成功鎮', '關山鎮', '卑南鄉', '池上鄉', '太麻里鄉'] },
+  '澎湖縣': { region: '東部／離島', lat: 23.5711, lon: 119.5793, districts: ['全區', '馬公市', '湖西鄉', '白沙鄉', '西嶼鄉'] },
+  '金門縣': { region: '東部／離島', lat: 24.4493, lon: 118.3767, districts: ['全區', '金城鎮', '金湖鎮', '金沙鎮', '金寧鄉'] },
+  '連江縣': { region: '東部／離島', lat: 26.1505, lon: 119.9499, districts: ['全區', '南竿鄉', '北竿鄉', '莒光鄉', '東引鄉'] }
+};
+
+/*
+  欄位設計：
+  0: 名稱
+  1: 分類
+  2: 區域
+  3: emoji
+  4: 簡介
+  5: 標籤
+  6: bfSafe (男友是否安全：無A菜/豬肉/菠菜/茄子/內臟，但豬肝OK)
+  7: bfTip (男友提醒)
+  8: gfSafe (女友是否安全：無芋頭過敏原)
+  9: gfTip (女友提醒)
+  10: avgPrice (預估個人消費金額 NT$)
+*/
+const FOODS = [
+  // 200以下平價美食
+  ['蚵仔煎','夜市小吃','南部','🦪','外酥內嫩配酸甜醬汁，夜市經典小吃','夜市經典',true,'別加A菜或菠菜',true,'',90],
+  ['營養三明治','夜市小吃','北部','🥪','酥炸麵包夾蛋、番茄、小黃瓜與美乃滋','北部人氣',true,'可請店家避開火腿或豬肉配料',true,'',75],
+  ['鹽酥雞','夜市小吃','全臺','🍗','炸得酥香加上九層塔更過癮，挑雞肉與杏鮑菇超讚','全臺人氣宵夜',true,'避開豬肉與其他內臟，有豬肝可點',true,'勿點炸芋簽或芋泥球',150],
+  ['地瓜球','夜市小吃','全臺','🟡','外酥內Q有嚼勁，一顆接一顆停不下來','夜市必吃點心',true,'',true,'純地瓜製作，無芋頭放心吃',60],
+  ['脆皮雞排','夜市小吃','全臺','🍗','大份量酥脆雞排，大口咬肉超滿足','國民人氣小吃',true,'純雞肉安全過關',true,'',100],
+  ['臭豆腐','夜市小吃','全臺','🧈','外酥內嫩搭配酸脆泡菜，越吃越涮嘴','台灣特色小吃',true,'',true,'',80],
+  ['胡椒餅','夜市小吃','北部','🥮','炭烤酥香餅皮，多汁肉餡胡椒香氣十足','排隊小吃',false,'傳統胡椒餅含豬肉餡',true,'',70],
+  ['雞腿便當','飯類','全臺','🍱','酥炸或滷雞腿配菜與白飯，飽足感滿分','飽足首選',true,'配菜避開A菜、菠菜、茄子與豬肉',true,'配菜若有芋頭塊記得挑掉',130],
+  ['嘉義雞肉飯','飯類','南部','🍚','嫩雞絲鋪滿熱騰騰白飯，淋上油蔥醬汁超香','南部經典',true,'避開豬肉配菜即可',true,'',95],
+  ['滷肉飯','飯類','全臺','🍚','傳統滷肉淋在熱白飯上，台灣國民美食','國民美食',false,'傳統滷肉飯以豬肉為主',true,'',85],
+  ['排骨飯','飯類','全臺','🍱','酥香排骨配熱騰騰白飯，經典便當選擇','便當經典',false,'排骨多為豬排',true,'',125],
+  ['控肉飯','飯類','中部','🥩','滷得入味軟嫩，超級下飯','中部經典飯食',false,'控肉為豬五花肉',true,'',120],
+  ['紅燒牛肉麵','麵食','全臺','🍜','濃郁紅燒湯頭搭配軟嫩牛肉與Q彈麵條','台灣代表麵食',true,'牛肉為主，注意配菜即可',true,'',180],
+  ['台南擔仔麵','麵食','南部','🍜','鮮甜蝦湯搭配麵條與滷蛋，精緻好入口','南部經典',true,'請店家不加豬肉燥',true,'',90],
+  ['客家板條／炒麵','麵食','中部','🍝','苗栗與中部人氣麵食，油蔥香氣十足','中部在地特色',true,'選純炒麵或雞肉配料，避開豬肉與內臟',true,'',95],
+  ['台東米苔目','麵食','東部／離島','🍜','Q彈米苔目搭配柴魚高湯，口感滑順','東部經典',true,'請店家避開豬肉燥與不愛吃的青菜',true,'',85],
+  ['麻醬麵','麵食','全臺','🍜','濃郁芝麻醬拌麵，簡單又滿足','經典麵食',true,'',true,'',75],
+  ['滷味','麵食','全臺','🥢','自己夾喜歡的食材，挑雞肉、豆干、菇類與豬肝','自由搭配',true,'避開豬肉片、A菜、菠菜、茄子與其他內臟；豬肝可夾！',true,'記得不要夾芋頭糕或芋頭丸',160],
+  ['台式蛋炒飯','台式料理','全臺','🍳','粒粒分明蛋香十足，可選蝦仁或雞丁口味','家常美味',true,'點雞丁、蝦仁或蛋炒飯，避開火腿/豬肉',true,'',110],
+  ['珍珠奶茶','飲料甜點','全臺','🧋','經典台灣手搖飲，甜度冰塊隨心挑','飲料時間',true,'',true,'避開芋泥波波或小芋圓配料',75],
+  ['傳統豆花','飲料甜點','南部','🍮','滑嫩豆花配花生、粉圓或紅豆，甜而不膩','甜品時間',true,'',true,'配料選花生/粉圓/綠豆，千萬別加芋圓！',65],
+  ['芋圓仙草','飲料甜點','中部','🍧','Q彈芋圓搭配滑嫩仙草，台灣經典甜品','台灣甜品',true,'',false,'含有芋圓（芋頭成分）',75],
+
+  // 200 ~ 500 之間（屬於 500以下）
+  ['香煎鮭魚丼','飯類','北部','🍣','鮭魚油脂豐富，搭配白飯與清爽配菜','清爽飯食',true,'避開不愛吃的蔬菜',true,'',280],
+  ['個人小火鍋','火鍋','全臺','🍲','一人一鍋想吃什麼自己選，雞肉、海鮮、豬肝都能搭','暖心首選',true,'菜盤避開A菜、菠菜、茄子與豬肉片，豬肝可煮！',true,'菜盤若有芋頭塊記得先請店員換掉',260],
+  ['酸菜白肉鍋','火鍋','北部','🥬','酸香湯頭配料豐富，暖胃又開胃','暖心鍋物',false,'傳統酸菜白肉鍋以豬肉片為主',true,'注意火鍋料不含芋頭丸',380],
+  ['三杯雞定食／熱炒','台式料理','全臺','🍗','麻油、醬油、米酒與九層塔香氣十足，超下飯','下飯神菜',true,'純雞肉料理，安心吃',true,'',320],
+  ['塔香炒豬肝套餐','台式料理','全臺','🍳','唯一指定的內臟愛將！大火快炒配九層塔超香','專屬推薦',true,'專為喜歡豬肝的你保留！',true,'',240],
+  ['清蒸鱸魚料理','台式料理','東部／離島','🐟','肉質細嫩鮮甜，保留魚肉原汁原味','鮮味料理',true,'魚類料理，清爽無負擔',true,'',350],
+  ['薑母鴨','台式料理','中部','🍲','薑香湯頭暖胃又暖心，天冷最適合','暖身經典',true,'鴨肉為主，避開不愛吃的蔬菜與其他內臟',true,'加點火鍋料時避開芋頭丸',420],
+  ['日式雞白湯拉麵','日韓料理','北部','🍜','濃郁雞白湯頭搭配舒肥雞胸與溏心蛋，暖呼呼享受','日式享受',true,'選雞肉叉燒款，避開豬肉叉燒',true,'',310],
+  ['韓式炸雞','日韓料理','全臺','🍗','甜辣或洋釀醬汁包裹酥脆雞肉，超唰嘴','韓式人氣',true,'純炸雞款安全，配醃蘿蔔很解膩',true,'',360],
+  ['迴轉／綜合壽司','日韓料理','全臺','🍣','鮭魚、鮪魚、玉子燒與蝦壽司，清爽有飽足感','清爽選擇',true,'避開豬肉相關壽司捲即可',true,'',340],
+
+  // 500 ~ 800 之間（屬於 800以下）
+  ['石頭火鍋聚餐','火鍋','全臺','🍲','先爆香再加入高湯，肉盤海鮮超豐盛','台式火鍋',true,'肉盤選牛肉、雞肉或海鮮，避開豬肉與不愛吃的菜',true,'菜盤若有芋頭先挑掉喔',620],
+  ['麻辣鴛鴦鍋','火鍋','全臺','🌶️','香麻湯底涮牛肉與鴨血豆腐超夠味','重口味之選',true,'選牛肉/雞肉/海鮮，避開豬肉與其他內臟',true,'火鍋料避開芋頭貢丸',720],
+  ['個人燒肉套餐','燒肉排餐','全臺','🥩','一人一爐烤牛五花、雞腿肉與海鮮，儀式感滿滿','燒肉享受',true,'套餐選全牛或牛雞雙拼，避開豬五花與內臟拼盤',true,'甜點若附芋泥類記得替換',680],
+  ['日式壽喜燒吃到飽','日韓料理','北部','🥘','甜鹹醬汁涮嫩牛肉片沾蛋液，大口吃肉超過癮','聚餐首選',true,'專攻牛肉與雞腿肉，避開豬肉盤與不愛吃的青菜',true,'',650],
+  ['美式經典牛排餐','燒肉排餐','全臺','🍽️','厚切沙朗或菲力牛排配酥皮濃湯與沙拉吧','約會排餐',true,'點牛排或雞排，沙拉吧避開不愛吃的蔬菜',true,'甜點區避開芋頭口味',750],
+
+  // 900以上 精緻大餐
+  ['頂級和牛燒肉盛宴','燒肉排餐','全臺','🔥','專人代烤或頂級和牛拼盤，入口即化的約會首選','奢華約會',true,'點全牛與海鮮組合，避開豬肉及內臟拼盤',true,'飯後甜點避開芋頭製品',1450],
+  ['精緻日式無菜單料理','日韓料理','北部','🍣','主廚嚴選當季生魚片、握壽司與炙燒海鮮','浪漫紀念日',true,'可提前告知師傅不吃豬肉與內臟',true,'若有芋頭天婦羅或芋泥甜點請師傅替換',1600],
+  ['海陸活體蒸氣海鮮鍋','火鍋','南部','🦞','龍蝦、鮑魚、鮮魚層層清蒸，精華煮粥鮮甜破表','海味饗宴',true,'純海鮮與粥品，避開豬肉配料即可',true,'確認粥底或配菜無芋頭塊',1300],
+  ['高空景觀乾式熟成牛排','燒肉排餐','北部','🥂','夜景配頂級熟成牛排，氣氛直接拉滿','心動約會夜',true,'純牛排西餐非常安全',true,'甜點避開芋頭慕斯',1850],
+  ['法式精緻鐵板燒','燒肉排餐','中部','👨‍🍳','主廚桌邊現煎干貝、龍蝦與菲力牛排，視覺味覺雙享受','高質感大餐',true,'選牛排與海鮮主餐即可',true,'',1380]
+];
+
+const GIRL_FLIRTY_MESSAGES = [
+  '「小寶貝乖乖去吃飯，吃完晚上才有體力被我黏著 ♡」',
+  '「今天有沒有想我？先把這頓吃完，等下再好好想我也不遲喔 🎀」',
+  '「不准餓肚子！你可是我的專屬小寶貝，餓瘦了我會心疼的 🥺」',
+  '「這份晚餐加了滿滿的想念，吃一口就等於被我親一下喔 💋」',
+  '「快去吃飯，吃完記得傳訊息跟我報備，不然我要去夢裡找你囉 ♡」',
+  '「不管你在哪裡，只要按時吃飯，我就獎勵你一個大大的抱抱 🤍」'
+];
+
+const BOY_FLIRTY_MESSAGES = [
+  '「乖，這道已經幫你把不愛吃的都挑掉了，專心吃飽就好 💙」',
+  '「別只顧著忙，按時吃飯才不會讓我擔心，晚點換我陪你。」',
+  '「這餐算我的愛心點名，吃完記得跟我說好不好吃，不准敷衍我。」',
+  '「把不愛吃的交給我處理，你只要負責吃得開心、被我寵著就好 ✨」',
+  '「天氣變化大，記得吃暖一點，不然我會忍不住想把你抱緊取暖。」',
+  '「今天也辛苦了，快去吃這道，等下換你來討獎勵 💙」'
+];
+
+const STORAGE_KEY = 'couple_dinner_history_v4';
+let theme = 'girl'; // 'girl' or 'boy'
+let city = '新北市';
+let district = '新莊區';
+let budget = 'all'; // 'all', '200', '500', '800', '900+'
+let category = '全部';
+let gfMode = true;  // 女友模式預設開啟防芋頭過敏
+let bfMode = false; // 切換男友模式時自動開啟忌口過濾
+let current = null;
+let history = loadHistory();
+
+const $ = id => document.getElementById(id);
+
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.slice(0, 8) : [];
+  } catch { return []; }
+}
+
+function saveHistory() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); } catch {}
+}
+
+function renderHistory() {
+  $('history').textContent = history.length
+    ? history.map((x, i) => `${i + 1}. ${x}`).join(' ｜ ')
+    : '尚無紀錄，快來抽一個！';
+}
+
+function updateClock() {
+  const now = new Date();
+  const week = ['日','一','二','三','四','五','六'][now.getDay()];
+  const pad = n => String(n).padStart(2, '0');
+  const timeStr = `${now.getMonth() + 1}/${now.getDate()} (週${week}) ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  $('clockBadge').textContent = `🕒 ${timeStr}`;
+}
+
+async function fetchLocalWeather(cityName) {
+  const loc = TAIWAN_LOCATIONS[cityName] || TAIWAN_LOCATIONS['全臺不限'];
+  $('weatherBadge').textContent = `🌤️ 查詢${cityName}天氣中...`;
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current_weather=true&timezone=Asia%2FTaipei`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const cw = data.current_weather;
+    const temp = Math.round(cw.temperature);
+    const wInfo = mapWeatherCode(cw.weathercode);
+    $('weatherBadge').textContent = `${wInfo.icon} ${cityName} ${temp}°C・${wInfo.label}`;
+
+    let advice = '';
+    if (temp <= 18) {
+      advice = `🥶 ${cityName}現在只有 ${temp}°C 有點涼，超適合吃熱呼呼的火鍋或湯麵暖暖身子！`;
+    } else if (temp >= 29) {
+      advice = `☀️ ${cityName}現在 ${temp}°C 偏熱，吃完正餐很適合再來杯手搖飲或豆花消暑！`;
+    } else {
+      advice = `✨ ${cityName}現在 ${temp}°C（${wInfo.label}），天氣剛剛好，想吃什麼都可以放心衝！`;
+    }
+    $('weatherTip').textContent = advice;
+  } catch {
+    $('weatherBadge').textContent = `🌤️ ${cityName}・晴時多雲`;
+    $('weatherTip').textContent = `📍 已鎖定「${cityName}」，按下抽選就會幫你帶入 Google Maps 附近搜尋！`;
+  }
+}
+
+function mapWeatherCode(code) {
+  if (code === 0) return { icon: '☀️', label: '晴朗' };
+  if (code <= 3) return { icon: '⛅', label: '多雲時晴' };
+  if (code <= 48) return { icon: '🌫️', label: '有霧' };
+  if (code <= 67) return { icon: '🌧️', label: '有雨記得帶傘' };
+  if (code <= 82) return { icon: '🌦️', label: '陣雨' };
+  return { icon: '⛈️', label: '雷雨注意' };
+}
+
+function initLocationSelectors() {
+  const citySel = $('citySelect');
+  Object.keys(TAIWAN_LOCATIONS).forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    if (c === city) opt.selected = true;
+    citySel.appendChild(opt);
+  });
+  populateDistricts(city, district);
+}
+
+function populateDistricts(cityName, defaultDist = null) {
+  const distSel = $('distSelect');
+  distSel.innerHTML = '';
+  const list = TAIWAN_LOCATIONS[cityName]?.districts || ['全區'];
+  list.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d;
+    if (defaultDist && d === defaultDist) opt.selected = true;
+    distSel.appendChild(opt);
+  });
+  district = distSel.value;
+}
+
+function setTheme(newTheme) {
+  theme = newTheme;
+  const isBoy = theme === 'boy';
+  document.body.classList.toggle('boy-theme', isBoy);
+  $('btnGirl').classList.toggle('active', !isBoy);
+  $('btnBoy').classList.toggle('active', isBoy);
+  $('btnGirl').setAttribute('aria-selected', !isBoy);
+  $('btnBoy').setAttribute('aria-selected', isBoy);
+  $('themeMeta').setAttribute('content', isBoy ? '#e6f2ff' : '#fff3ed');
+
+  if (isBoy) {
+    bfMode = true;
+    $('bfMode').checked = true;
+    $('heroEmoji').textContent = '💙 🍽️ 🇹🇼';
+    $('heroTitle').textContent = '男友專屬今晚吃什麼？';
+    $('heroSub').textContent = '避開不愛吃的地雷・全臺地圖美食抽選';
+    $('draw').textContent = '💙 幫你決定今晚吃什麼！';
+    $('msgTitle').textContent = '💬 專屬曖昧小語';
+    $('message').textContent = BOY_FLIRTY_MESSAGES[Math.floor(Math.random() * BOY_FLIRTY_MESSAGES.length)];
+  } else {
+    gfMode = true;
+    $('gfMode').checked = true;
+    $('heroEmoji').textContent = '🎀 💗 🇹🇼';
+    $('heroTitle').textContent = '小寶貝今晚吃什麼？';
+    $('heroSub').textContent = '女友愛心餐單（已排除芋頭過敏）・全臺美食抽選';
+    $('draw').textContent = '💗 女友幫小寶貝決定！';
+    $('msgTitle').textContent = '💌 女友偷偷對你說';
+    $('message').textContent = GIRL_FLIRTY_MESSAGES[Math.floor(Math.random() * GIRL_FLIRTY_MESSAGES.length)];
+  }
+}
+
+function popEmoji() {
+  const el = $('foodEmoji');
+  el.classList.remove('pop');
+  void el.offsetWidth;
+  el.classList.add('pop');
+  setTimeout(() => el.classList.remove('pop'), 260);
+}
+
+function getLocationLabel() {
+  if (city === '全臺不限') return '台灣';
+  return district === '全區' ? city : `${city}${district}`;
+}
+
+function matchBudget(price) {
+  if (budget === 'all') return true;
+  if (budget === '200') return price <= 200;
+  if (budget === '500') return price <= 500;
+  if (budget === '800') return price <= 800;
+  if (budget === '900+') return price >= 900;
+  return true;
+}
+
+function getPool() {
+  const macroRegion = TAIWAN_LOCATIONS[city]?.region || '全臺';
+  return FOODS.filter(f => {
+    const okRegion = macroRegion === '全臺' || f[2] === macroRegion || f[2] === '全臺';
+    const okCat = category === '全部' || f[1] === category;
+    const okBudget = matchBudget(f[10]);
+    const okBf = !bfMode || f[6] === true;
+    const okGf = !gfMode || f[8] === true;
+    return okRegion && okCat && okBudget && okBf && okGf;
+  });
+}
+
+function draw() {
+  const pool = getPool();
+  const locText = getLocationLabel();
+  $('resultCard').classList.remove('accepted');
+
+  if (!pool.length) {
+    current = null;
+    $('resultLabel').textContent = '🥺 這個組合暫時沒菜色啦！';
+    $('foodEmoji').textContent = '🍃';
+    $('foodName').textContent = '目前沒有符合的餐點';
+    $('foodDesc').textContent = '試著放寬「預算價位」或切換「全部」分類，馬上幫你重新配對！';
+    $('foodTag').textContent = `${locText}・${category}`;
+    $('mapLink').style.display = 'none';
+    return;
+  }
+
+  let choices = pool.filter(f => !current || f[0] !== current[0]);
+  if (!choices.length) choices = pool;
+
+  current = choices[Math.floor(Math.random() * choices.length)];
+  const tips = [];
+  if (gfMode && current[9]) tips.push(`🌸女友注意：${current[9]}`);
+  if (bfMode && current[7]) tips.push(`💙男友注意：${current[7]}`);
+  const tipText = tips.length ? `（${tips.join('／')}）` : '';
+
+  $('resultLabel').textContent = `🎉 命運為你在「${locText}」選中了！`;
+  $('foodEmoji').textContent = current[3];
+  $('foodName').textContent = current[0];
+  $('foodDesc').textContent = current[4] + tipText;
+  $('foodTag').textContent = `${locText}・${current[1]}・約 NT$${current[10]}/人`;
+
+  const query = encodeURIComponent(`${locText} ${current[0]}`);
+  const mapBtn = $('mapLink');
+  mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  mapBtn.textContent = `🗺️ 在 Google Maps 搜尋「${locText} ${current[0]}」`;
+  mapBtn.style.display = 'inline-flex';
+
+  const msgPool = theme === 'boy' ? BOY_FLIRTY_MESSAGES : GIRL_FLIRTY_MESSAGES;
+  $('message').textContent = msgPool[Math.floor(Math.random() * msgPool.length)];
+  popEmoji();
+
+  const recordLabel = `${current[0]} (~$${current[10]})`;
+  history = [recordLabel, ...history.filter(item => item !== recordLabel)].slice(0, 8);
+  saveHistory();
+  renderHistory();
+}
+
+// 事件監聽
+$('btnGirl').addEventListener('click', () => setTheme('girl'));
+$('btnBoy').addEventListener('click', () => setTheme('boy'));
+
+$('citySelect').addEventListener('change', e => {
+  city = e.target.value;
+  populateDistricts(city);
+  fetchLocalWeather(city);
+});
+
+$('distSelect').addEventListener('change', e => {
+  district = e.target.value;
+});
+
+$('budgets').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-budget]');
+  if (!btn) return;
+  budget = btn.dataset.budget;
+  document.querySelectorAll('#budgets .chip').forEach(x => {
+    x.classList.toggle('active', x === btn);
+  });
+});
+
+$('categories').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-cat]');
+  if (!btn) return;
+  category = btn.dataset.cat;
+  document.querySelectorAll('#categories .chip').forEach(x => {
+    x.classList.toggle('active', x === btn);
+  });
+});
+
+$('gfMode').addEventListener('change', e => {
+  gfMode = e.target.checked;
+  $('message').textContent = gfMode
+    ? '「已開啟女友芋頭過敏過濾，絕對不會抽到芋頭相關餐點喔 ♡」'
+    : '「已關閉芋頭過敏過濾，全部甜品都開放囉！」';
+});
+
+$('bfMode').addEventListener('change', e => {
+  bfMode = e.target.checked;
+  $('message').textContent = bfMode
+    ? '「已開啟男友忌口過濾：避開A菜、豬肉、菠菜、茄子、內臟類，但豬肝會幫你留著喔 💙」'
+    : '「已關閉男友忌口過濾，全臺美食都能抽到囉！」';
+});
+
+$('draw').addEventListener('click', draw);
+$('again').addEventListener('click', draw);
+
+$('accept').addEventListener('click', () => {
+  if (!current) {
+    $('message').textContent = '「先按按鈕抽出一道美食，才能決定今晚吃什麼喔！」';
+    return;
+  }
+  const locText = getLocationLabel();
+  $('resultCard').classList.add('accepted');
+  $('resultLabel').textContent = '❤️ 就決定吃這道了！';
+  $('foodTag').textContent = `${locText}・約 NT$${current[10]}/人・已鎖定開動 🍽️`;
+  $('message').textContent = theme === 'boy'
+    ? `「就這麼決定了，今晚去${locText}吃 ${current[0]}！快出發吧，吃完記得跟我說 💙」`
+    : `「決定了！今晚小寶貝就在${locText}吃 ${current[0]}！乖乖去吃飯，啾咪 ♡」`;
+});
+
+$('clear').addEventListener('click', () => {
+  history = [];
+  saveHistory();
+  renderHistory();
+});
+
+// 初始化
+initLocationSelectors();
+updateClock();
+setInterval(updateClock, 30000);
+fetchLocalWeather(city);
+renderHistory();
+</script>
+</body>
+</html>
